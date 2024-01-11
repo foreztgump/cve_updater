@@ -2,13 +2,10 @@
 __pycache__
 
 # ignore ssh folder
-.ssh/
+#.ssh/
 
 # ignore venv folder
 .venv
 
 # ignore trickest_hash
 trickest_hash.json
-
-# ignore .env file
-.env
