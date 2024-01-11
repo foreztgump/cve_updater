@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  cve_updater:
+    build: 
+      context: .
+      args:
+        GIT_USERNAME: ${GIT_USERNAME}
+        GIT_EMAIL: ${GIT_EMAIL}
+    volumes:
+      - .:/cve_updater
+    env_file:
+      - .env

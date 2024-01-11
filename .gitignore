@@ -1,0 +1,8 @@
+# ignore ssh folder
+ssh/*
+
+# ignore venv folder
+.venv
+
+# ignore trickest_hash
+trickest_hash.json
