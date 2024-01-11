@@ -11,3 +11,4 @@ services:
       - .:/cve_updater
     env_file:
       - .env
+    restart: unless-stopped
