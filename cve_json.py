@@ -101,6 +101,7 @@ def parse_and_update_json(file_list, json_repo_folder):
 
 
 def cve_json_push(json_repo_folder):
+    print("Pushing json files to git...")
     git_module = GitModule(json_repo_folder)
     git_module.add()
     git_module.commit("Update cve json files")

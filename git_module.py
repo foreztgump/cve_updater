@@ -39,3 +39,7 @@ class GitModule:
     def commit(self, message):
         repo = Repo(self.repo_path)
         repo.git.commit("-m", message)
+
+    def push(self):
+        repo = Repo(self.repo_path)
+        repo.git.push().raise_if_error()

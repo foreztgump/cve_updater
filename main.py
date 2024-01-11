@@ -6,6 +6,7 @@ def main():
     trickest_repo_folder, json_repo_folder = check_repos()
     if updated_files := check_updated_files(trickest_repo_folder):
         parse_and_update_json(updated_files, json_repo_folder)
+        print(f"Updated {len(updated_files)} files.")
         cve_json_push(json_repo_folder)
 
 
