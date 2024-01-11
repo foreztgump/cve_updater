@@ -1,4 +1,6 @@
-import git
+import os
+from git import Repo
+from dotenv import load_dotenv
 
 
 class GitModule:
@@ -8,33 +10,32 @@ class GitModule:
 
     def clone_from_trickest(self):
         try:
-            trickest_repo = git.Repo.clone_from(
-                "https://github.com/trickest/cve.git",
+            Repo.clone_from(
+                os.getenv("TRICKEST_REPO_URL"),
                 self.repo_path,
                 branch=self.branch,
             )
-            return trickest_repo
         except Exception as e:
             print(e)
 
     def clone_from_json(self):
         try:
-            json_repo = git.Repo.clone_from(
-                "https://github.com/foreztgump/cve_json.git",
+            Repo.clone_from(
+                os.getenv("JSON_REPO_URL"),
                 self.repo_path,
                 branch=self.branch,
             )
-        except:
-            print("Repo already exists")
+        except Exception as e:
+            print(e)
 
     def pull(self):
-        repo = git.Repo(self.repo_path)
+        repo = Repo(self.repo_path)
         repo.git.pull()
 
     def add(self):
-        repo = git.Repo(self.repo_path)
+        repo = Repo(self.repo_path)
         repo.git.add(".")  # add all files
 
     def commit(self, message):
-        repo = git.Repo(self.repo_path)
+        repo = Repo(self.repo_path)
         repo.git.commit("-m", message)

@@ -8,6 +8,7 @@ cwd = os.getcwd()
 
 
 def check_repos():
+    print("Checking repos...")
     # create a trickest folder if it doesn't exist
     trickest_repo_folder = os.path.join(cwd, "trickest")
     if not os.path.exists(trickest_repo_folder):
@@ -26,6 +27,7 @@ def check_repos():
 
 
 def check_updated_files(trickest_repo_folder):
+    print("Checking updated files...")
     # create hash file if it doesn't exist
     trickest_hash_file = os.path.join(cwd, "trickest_hash.json")
     if not os.path.exists(trickest_hash_file):
@@ -65,20 +67,17 @@ def check_updated_files(trickest_repo_folder):
 
     # read the hash file
     with open(trickest_hash_file, "r") as f:
-        file_contents = f.read()
-        if file_contents:
+        if file_contents := f.read():
             old_trickest_hash = json.loads(file_contents)
         else:
             old_trickest_hash = {}
 
-    # compare the hash file with the current hash
-    updated_files = []
-    for file_path, file_hash in trickest_hash.items():
-        if file_path not in old_trickest_hash:
-            updated_files.append(file_path)
-        elif file_hash != old_trickest_hash[file_path]:
-            updated_files.append(file_path)
-
+    updated_files = [
+        file_path
+        for file_path, file_hash in trickest_hash.items()
+        if file_path not in old_trickest_hash
+        or file_hash != old_trickest_hash[file_path]
+    ]
     # update the hash file
     with open(trickest_hash_file, "w") as f:
         json.dump(trickest_hash, f)

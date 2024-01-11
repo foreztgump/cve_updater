@@ -9,3 +9,6 @@ ssh/*
 
 # ignore trickest_hash
 trickest_hash.json
+
+# ignore .env file
+.env

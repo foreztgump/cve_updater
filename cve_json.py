@@ -6,6 +6,7 @@ from git_module import GitModule
 
 
 def parse_and_update_json(file_list, json_repo_folder):
+    print("Parsing and updating json files...")
     for file in file_list:
         # read the file
         with open(os.path.abspath(file), "r", encoding="utf-8") as f:
@@ -14,25 +15,17 @@ def parse_and_update_json(file_list, json_repo_folder):
         # get the cve id
         cve_id = re.search(r"(CVE-\d{4}-\d{1,7})", data)
         if cve_id:
-            cve_id = cve_id.group(1)
+            cve_id = cve_id[1]
         else:
             print(f"Error: cve id not found in file: {file}")
             continue
 
         # get the product
         product = re.search(r"label=Product&message=(.*?)&", data)
-        if product:
-            product = urllib.parse.unquote(product.group(1).strip())
-        else:
-            product = "n/a"
-
+        product = urllib.parse.unquote(product[1].strip()) if product else "n/a"
         # get the version
         version = re.search(r"label=Version&message=(.*?)&", data)
-        if version:
-            version = urllib.parse.unquote(version.group(1).strip())
-        else:
-            version = "n/a"
-
+        version = urllib.parse.unquote(version[1].strip()) if version else "n/a"
         # get the vulnerability
         vulnerability = re.findall(r"label=Vulnerability&message=(.*?)&", data)
         if vulnerability:
@@ -42,22 +35,20 @@ def parse_and_update_json(file_list, json_repo_folder):
         # get the description
         description = re.search(r"Description(.*?)### POC", data, re.DOTALL)
         if description:
-            description = description.group(1).strip().replace("\n\n", " ")
+            description = description[1].strip().replace("\n\n", " ")
         else:
-            print("Error: description not found in file: " + file)
+            print(f"Error: description not found in file: {file}")
             description = "Unknown"
 
-        # get the poc
-        poc_text = re.search(r"POC(.*?)$", data, re.DOTALL)
-        if poc_text:
-            poc_text = poc_text.group(1).strip()
+        if poc_text := re.search(r"POC(.*?)$", data, re.DOTALL):
+            poc_text = poc_text[1].strip()
 
             # get the reference
             reference = re.search(
                 r"#### Reference(.*?)#### Github", poc_text, re.DOTALL
             )
             if reference:
-                reference = reference.group(1).strip()
+                reference = reference[1].strip()
                 reference = [
                     line.lstrip("- ").strip() for line in reference.split("\n") if line
                 ]
@@ -67,7 +58,7 @@ def parse_and_update_json(file_list, json_repo_folder):
             # get the github
             github = re.search(r"#### Github(.*?)$", poc_text, re.DOTALL)
             if github:
-                github = github.group(1).strip()
+                github = github[1].strip()
                 github = [
                     line.lstrip("- ").strip() for line in github.split("\n") if line
                 ]
@@ -76,7 +67,7 @@ def parse_and_update_json(file_list, json_repo_folder):
 
             poc = {"reference": reference, "github": github}
         else:
-            print("Error: poc not found in file: " + file)
+            print(f"Error: poc not found in file: {file}")
             poc = {"reference": "Unknown", "github": "Unknown"}
 
         # create a dictionary with the data
@@ -107,9 +98,6 @@ def parse_and_update_json(file_list, json_repo_folder):
             json_data.update(data_dict)
             with open(json_file_path, "w") as f:
                 json.dump(json_data, f, indent=4)
-
-
-def cve_json_push(json_repo_folder):
     git_module = GitModule(json_repo_folder)
     git_module.add()
     git_module.commit("Update cve json files")
