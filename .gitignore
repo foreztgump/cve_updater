@@ -1,5 +1,8 @@
+# ignore python cache
+__pycache__
+
 # ignore ssh folder
-#ssh/*
+ssh/*
 
 # ignore venv folder
 .venv
