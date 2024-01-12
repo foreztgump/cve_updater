@@ -24,8 +24,13 @@ RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN git config --global user.name "${GIT_USERNAME}"
 RUN git config --global user.email "${GIT_EMAIL}"
 
-# Add a cron job to run main.py every 12 hours
-RUN (crontab -l ; echo "0 */12 * * * . /cve_updater/venv/bin/activate && python3 /cve_updater/main.py") | crontab
 
-# Start cron in the foreground
-CMD ["cron", "-f"]
+# Copy the cronjob file to /etc/cron.d/cronjob and set permissions.
+COPY cronjob /etc/cron.d/cronjob
+RUN chmod 0644 /etc/cron.d/cronjob && crontab /etc/cron.d/cronjob
+
+# Create the cron.log file.
+RUN touch /var/log/cron.log
+
+# Start the cron daemon and tail the cron.log file.
+CMD eval "$(ssh-agent -s)" && ssh-add /root/.ssh/id_rsa && cron && tail -f /var/log/cron.log

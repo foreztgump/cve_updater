@@ -1,0 +1,1 @@
+0 0,12 * * * env $(cat /cve_updater/.env | grep ^[A-Z] | xargs) /cve_updater/venv/bin/python3 /cve_updater/main.py >> /var/log/cron.log 2>&1

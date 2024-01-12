@@ -88,6 +88,9 @@ def parse_and_update_json(file_list, json_repo_folder):
         json_file_name = f"{cve_id}.json"
         json_file_path = os.path.join(json_repo_folder, dir_name, json_file_name)
 
+        # create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
+
         # check if the json file exists, if not create one, if yes, update it
         if not os.path.exists(json_file_path):
             with open(json_file_path, "w") as f:

@@ -38,8 +38,11 @@ class GitModule:
 
     def commit(self, message):
         repo = Repo(self.repo_path)
-        repo.git.commit("-m", message)
+        if changes := repo.git.diff(None, name_only=True):
+            repo.git.commit("-m", message)
+        else:
+            print("No changes to commit")
 
     def push(self):
         repo = Repo(self.repo_path)
-        repo.git.push().raise_if_error()
+        repo.git.push()
