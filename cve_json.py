@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import chardet
 import urllib.parse
 from git_module import GitModule
 
@@ -9,7 +10,8 @@ def parse_and_update_json(file_list, json_repo_folder):
     print("Parsing and updating json files...")
     for file in file_list:
         # read the file
-        with open(os.path.abspath(file), "r", encoding="utf-8") as f:
+        encoding = get_encoding(file)
+        with open(os.path.abspath(file), "r", encoding=encoding, errors="ignore") as f:
             data = f.read()
 
         # get the cve id
@@ -109,3 +111,9 @@ def cve_json_push(json_repo_folder):
     git_module.add()
     git_module.commit("Update cve json files")
     git_module.push()
+
+
+def get_encoding(file):
+    with open(file, "rb") as f:
+        result = chardet.detect(f.read())
+    return result["encoding"]

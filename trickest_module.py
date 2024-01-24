@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+
 from git_module import GitModule
 
 # get the current working directory

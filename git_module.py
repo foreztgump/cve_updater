@@ -34,11 +34,11 @@ class GitModule:
 
     def add(self):
         repo = Repo(self.repo_path)
-        repo.git.add(".")  # add all files
+        repo.git.add("--all")  # add all files
 
     def commit(self, message):
         repo = Repo(self.repo_path)
-        if changes := repo.git.diff(None, name_only=True):
+        if changes := repo.git.diff("--cached", name_only=True):
             repo.git.commit("-m", message)
         else:
             print("No changes to commit")
