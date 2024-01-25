@@ -6,8 +6,9 @@ import urllib.parse
 from git_module import GitModule
 
 
-def parse_and_update_json(file_list, json_repo_folder):
+def parse_and_update_json(file_list, json_repo_folder) -> list:
     print("Parsing and updating json files...")
+    output = []
     for file in file_list:
         # read the file
         encoding = get_encoding(file)
@@ -103,6 +104,10 @@ def parse_and_update_json(file_list, json_repo_folder):
             json_data.update(data_dict)
             with open(json_file_path, "w") as f:
                 json.dump(json_data, f, indent=4)
+
+        output.append(json_file_path)
+
+    return output
 
 
 def cve_json_push(json_repo_folder):
