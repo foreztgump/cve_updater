@@ -1,7 +1,5 @@
 GitPython
 python-dotenv
 chardet
-langchain-community
-meilisearch
-langchain-openai
-jq
+meilisearch-python-sdk
+python-dotenv
