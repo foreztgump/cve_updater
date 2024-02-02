@@ -27,7 +27,7 @@ def check_repos():
     return trickest_repo_folder, json_repo_folder
 
 
-def check_updated_files(trickest_repo_folder):
+def check_updated_files(trickest_repo_folder) -> list:
     print("Checking updated files...")
     # create hash file if it doesn't exist
     trickest_hash_file = os.path.join(cwd, "trickest_hash.json")

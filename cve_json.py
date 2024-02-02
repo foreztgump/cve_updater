@@ -104,9 +104,7 @@ def parse_and_update_json(file_list, json_repo_folder) -> list:
             json_data.update(data_dict)
             with open(json_file_path, "w") as f:
                 json.dump(json_data, f, indent=4)
-
         output.append(json_file_path)
-
     return output
 
 

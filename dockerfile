@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y cron python3 python3-venv openssh-clien
 
 # Create a Python virtual environment and install the required packages
 RUN python3 -m venv /cve_updater/venv
+RUN /bin/bash -c "source /cve_updater/venv/bin/activate"
 RUN /cve_updater/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # Set up SSH for git

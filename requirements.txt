@@ -2,4 +2,3 @@ GitPython
 python-dotenv
 chardet
 meilisearch-python-sdk
-python-dotenv
