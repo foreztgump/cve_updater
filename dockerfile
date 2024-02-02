@@ -9,7 +9,7 @@ WORKDIR /cve_updater
 ADD . /cve_updater
 
 # Update the system and install cron python3 python3-venv openssh-client git
-RUN apt-get update && apt-get install -y cron python3 python3-venv openssh-client git
+RUN apt-get update && apt-get install -y nano cron python3 python3-venv openssh-client git
 
 # Create a Python virtual environment and install the required packages
 RUN python3 -m venv /cve_updater/venv

@@ -17,15 +17,32 @@ async def main(json_file_list: list):
         print(f"Importing {len(json_file_list)} documents")
         batch = []
         for json_file in json_file_list:
-            with open(json_file, "r") as f:
-                document = json.load(f)
-                batch.append(document)
+            try:
+                with open(json_file, "r") as f:
+                    document = json.load(f)
+                    batch.append(document)
+            except Exception as e:
+                error_list.append(str(e))
 
-        tasks = await index.add_documents_in_batches(batch, batch_size=2000)
-        print(f"Waiting for {len(tasks)} tasks to complete")
-        await asyncio.gather(
-            *[client.wait_for_task(task.task_uid, timeout_in_ms=None) for task in tasks]
-        )
+        max_retries = 2
+        for i in range(max_retries):
+            try:
+                tasks = await index.add_documents_in_batches(batch, batch_size=2000)
+                print(f"Waiting for {len(tasks)} tasks to complete")
+                await asyncio.gather(
+                    *[
+                        client.wait_for_task(task.task_uid, timeout_in_ms=None)
+                        for task in tasks
+                    ]
+                )
+                print("All tasks completed")
+                break
+            except Exception as e:
+                print(f"Error occurred: {str(e)}, retrying ({i+1}/{max_retries})")
+                if i == max_retries - 1:
+                    error_list.append(str(e))
+                else:
+                    await asyncio.sleep(2**i)
 
         print("All tasks completed")
         # Print any errors
