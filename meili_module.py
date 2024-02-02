@@ -1,19 +1,10 @@
 import os
 from meilisearch_python_sdk import AsyncClient
-from time import sleep
 from dotenv import load_dotenv
 import json
 import asyncio
 
 load_dotenv()
-
-
-async def wait_for_task_forever(client, task_uid):
-    while True:
-        task = await client.get_task(task_uid)
-        if task.status != "enqueued":
-            return task
-        await asyncio.sleep(5)  # wait for 1 second before checking again
 
 
 async def main(json_file_list: list):
@@ -29,23 +20,10 @@ async def main(json_file_list: list):
                 document = json.load(f)
                 batch.append(document)
 
-            # Limit to 20000 documents per import
-            if len(batch) >= 2000:
-                from_id = batch[0]["id"]
-                to_id = batch[-1]["id"]
-                print(f"Importing {len(batch)} documents from {from_id} to {to_id}")
-                task = await index.add_documents(list(batch))
-                await wait_for_task_forever(client, task.task_uid)
-                batch.clear()
-
-        # Add any remaining documents
-        if batch:
-            from_id = batch[0]["id"]
-            to_id = batch[-1]["id"]
-            print(f"Importing {len(batch)} documents from {from_id} to {to_id}")
-            task = await index.add_documents(list(batch))
-            await wait_for_task_forever(client, task.task_uid)
-            batch.clear()
+        tasks = await index.add_documents_in_batches(batch, batch_size=2000)
+        await asyncio.gather(
+            *[client.wait_for_task(task.task_uid, timeout_in_ms=None) for task in tasks]
+        )
 
         # Print any errors
         if error_list:
